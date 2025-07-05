@@ -41,6 +41,25 @@ def new_transaction():
     blockchain.add_transaction(tx)
     return 'Transaction added', 201
 
+@app.route('/block/receive', methods=['POST'])
+def receive_block():
+    data = request.get_json()
+    transactions = [Transaction(**tx) for tx in data['transactions']]
+    new_block = blockchain.create_genesis_block()
+    new_block.index = data['index']
+    new_block.timestamp = data['timestamp']
+    new_block.transaction = transactions
+    new_block.previous_hash = data['previous_hash']
+    new_block.nonce = data['nonce']
+    new_block.hash = data['hash']
+    
+    if new_block.previous_hash == blockchain.get_latest_block().hash:
+        blockchain.chain.append(new_block)
+        blockchain.pending_transactions = []
+        return 'Block accepted', 201
+    else:
+        return 'Block rejected', 400
+
 if __name__ == "__main__":
     import sys
     port = 5000
