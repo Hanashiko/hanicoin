@@ -28,7 +28,7 @@ def send_transaction(to, amount):
         recipient=to,
         amount=amount
     )
-    tx.sign()
+    tx.sign(priv)
     
     import requests
     response = requests.post("http://localhost:5000/transaction/new", json={
