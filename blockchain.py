@@ -75,5 +75,22 @@ class Blockchain:
         return True
     
     def print_chain(self):
-        for block in self.chian:
+        for block in self.chain:
             print(block)
+            
+bchain = Blockchain()
+
+bchain.add_transaction({
+    "sender": "Alice",
+    "recipient": "Bob",
+    "amount": 5
+})
+bchain.mine_pending_transactions(miner_address="Miner123")
+bchain.add_transaction({
+    "sender": "Bob",
+    "recipient": "Charlie",
+    "amount": 2
+})
+bchain.mine_pending_transactions(miner_address="Miner123")
+bchain.print_chain()
+print(f"is blockchain valid? {bchain.is_chain_valid()}")
