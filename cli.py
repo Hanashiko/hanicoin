@@ -52,6 +52,15 @@ def mine_block():
     bc.mine_pending_transactions(addr)
     bc.print_chain()
 
+def check_balance():
+    from blockchain import Blockchain
+    pub  = load_public_key(f"{WALLET_PREFIX}_public.pem")
+    addr = get_address_from_public_key(pub)
+    
+    bc = Blockchain()
+    bal = bc.get_balance(addr)
+    print(f"💰 Address balance {addr:12}...: {bal}")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="HaniCoin CLI")
     
@@ -66,6 +75,8 @@ if __name__ == "__main__":
     
     subparsers.add_parser("mine", help="Mine a new block")
     
+    subparsers.add_parser("balance", help="Check balance")
+    
     args = parser.parse_args()
     
     if args.command == "create-wallet":
@@ -76,5 +87,7 @@ if __name__ == "__main__":
         send_transaction(args.to, args.amount)
     elif args.command == "mine":
         mine_block()
+    elif args.command == "balance":
+        check_balance()
     else:
         parser.print_help()
