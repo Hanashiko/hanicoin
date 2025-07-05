@@ -20,6 +20,9 @@ class Block:
             "nonce": self.nonce
         }, sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
+    
+    def __str__(self):
+        return f"Block #{self.index} [\n Hash: {self.hash}\n Previous Hash: {self.previous_hash}\n Nonce: {self.nonce}\n Timestamp: {self.timestamp}\n Transaction: {json.dumps(self.transaction, indent=2)}\n]"
 
 class Blockchain:
     def __init__(self):
