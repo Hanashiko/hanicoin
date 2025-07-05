@@ -15,5 +15,7 @@ tx1.sign(priv_alice)
 bc.add_transaction(tx1)
 
 bc.mine_pending_transactions(miner_address=addr_bob)
+bc.mine_pending_transactions(miner_address=addr_bob)
+bc.mine_pending_transactions(miner_address=addr_bob)
 
 bc.print_chain()
