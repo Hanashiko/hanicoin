@@ -47,3 +47,13 @@ class Transaction:
         
     def __repr__(self):
         return f"<Tx {self.sender[:6]} -> {self.recipient[:6]}: {self.amount}>"
+    
+    def __str__(self):
+        return (
+            "Transaction:\n"
+            f"  From: {self.sender}\n"
+            f"  To: {self.recipient}\n"
+            f"  Amount: {self.amount}\n"
+            f"  Signature: {self.signature}\n"
+            f"  Valid: {self.is_valid()}"
+        )
