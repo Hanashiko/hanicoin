@@ -43,6 +43,15 @@ def send_transaction(to, amount):
     else:
         print(f"❌ Error: {response.text}")
 
+def mine_block():
+    pub = load_public_key(f"{WALLET_PREFIX}_public.pem")
+    addr = get_address_from_public_key(pub)
+    
+    from blockchain import Blockchain
+    bc = Blockchain()
+    bc.mine_pending_transactions(addr)
+    bc.print_chain()
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="HaniCoin CLI")
     
@@ -55,6 +64,8 @@ if __name__ == "__main__":
     send_parser.add_argument("--to", required=True, help="Recipient address")
     send_parser.add_argument("--amount", required=True, help="Amount")
     
+    subparsers.add_parser("mine", help="Mine a new block")
+    
     args = parser.parse_args()
     
     if args.command == "create-wallet":
@@ -63,3 +74,5 @@ if __name__ == "__main__":
         show_address()
     elif args.command == "send":
         send_transaction(args.to, args.amount)
+    elif args.command == "mine":
+        mine_block()
