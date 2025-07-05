@@ -87,4 +87,13 @@ class Blockchain:
     
     def print_chain(self):
         for block in self.chain:
-            print(block)
+            print(f"--- Block {block.index} ---")
+            print(f"Hash: {block.hash}")
+            print(f"Prev: {block.previous_hash}")
+            print("Transaction:")
+            for tx in block.transactions:
+                if isinstance(tx, Transaction):
+                    print(f"  {tx}")
+                else:
+                    print(f"  {tx}")
+            print()
