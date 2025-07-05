@@ -150,8 +150,8 @@ class Blockchain:
             chain_data.append({
                 "index": block.index,
                 "timestamp": block.timestamp,
-                "transactions": block.transaction,
-                "previeus_hash": block.previous_hash,
+                "transactions": transactions_data,
+                "previous_hash": block.previous_hash,
                 "nonce": block.nonce,
                 "hash": block.hash
             })
