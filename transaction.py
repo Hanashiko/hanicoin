@@ -38,7 +38,7 @@ class Transtion:
                 base64.b64decode(self.sender)
             )
             public_key.verify(
-                base64.b64decode(self.signature)
+                base64.b64decode(self.signature),
                 self.to_json().encode()
             )
             return True
