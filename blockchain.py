@@ -34,3 +34,30 @@ class Blockchain:
     def get_latest_block(self):
         return self.chain[-1]
     
+    def add_transaction(self, transaction):
+        self.pending_transactions.append(transaction)
+        
+    def mine_pending_transactions(self, miner_address):
+        reward_tx = {
+            'sender': "SYSTEM",
+            'recipient': miner_address,
+            'amount': self.mining_reward
+        }
+        self.pending_transactions.append(reward_tx)
+        
+        new_block = Block(
+            index=len(self.chain),
+            timestamp=time.time(),
+            transaction=self.pending_transactions,
+            previous_hash=self.get_latest_block().hash
+        )
+        
+        self.proof_of_work(new_block)
+        self.chain.append(new_block)
+        self.pending_transactions = []
+        
+    def proof_of_work(self, block):
+        while not block.hash.startswith('0' * self.difficulty):
+            block.nonce += 1
+            block.hash = block.calculate_hash()
+        
