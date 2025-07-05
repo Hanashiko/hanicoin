@@ -73,3 +73,7 @@ class Blockchain:
                 return False
         
         return True
+    
+    def print_chain(self):
+        for block in self.chian:
+            print(block)
