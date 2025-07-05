@@ -61,3 +61,15 @@ class Blockchain:
             block.nonce += 1
             block.hash = block.calculate_hash()
         
+    def is_chain_valid(self):
+        for i in range(1, len(self.chain)):
+            prev = self.chain[i-1]
+            curr = self.chain[i]
+            
+            if curr.hash != curr.calculate_hash():
+                return False
+            
+            if curr.previous_hash != prev.hash:
+                return False
+        
+        return True
