@@ -29,6 +29,19 @@ def send_transaction(to, amount):
         amount=amount
     )
     tx.sign()
+    
+    import requests
+    response = requests.post("http://localhost:5000/transaction/new", json={
+        "sender": tx.sender,
+        "recipient": tx.recipient,
+        "amount": tx.amount,
+        "signature": tx.signature
+    })
+    
+    if response.status_code == 201:
+        print("✅ Transaction sent")
+    else:
+        print(f"❌ Error: {response.text}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="HaniCoin CLI")
