@@ -76,3 +76,5 @@ if __name__ == "__main__":
         send_transaction(args.to, args.amount)
     elif args.command == "mine":
         mine_block()
+    else:
+        parser.print_help()
