@@ -59,6 +59,15 @@ def receive_block():
         return 'Block accepted', 201
     else:
         return 'Block rejected', 400
+    
+@app.route('/peer/add', methods=['POST'])
+def add_peer():
+    data = request.get_json()
+    peer = data.get("peer")
+    if peer:
+        peers.add(peer)
+        return 'Peer added', 201
+    return 'No peer', 400
 
 if __name__ == "__main__":
     import sys
