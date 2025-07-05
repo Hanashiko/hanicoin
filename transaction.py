@@ -47,3 +47,19 @@ class Transtion:
         
     def __repr__(self):
         return f"<Tx {self.sender[:6]} -> {self.recipient[:6]}: {self.amount}>"
+
+from cryptography.hazmat.primitives import serialization
+privkey = Ed25519PrivateKey.generate()
+pubkey = privkey.public_key()
+pubkey_b64 = base64.b64encode(
+    pubkey.public_bytes(
+        encoding=serialization.Encoding.Raw,
+        format=serialization.PublicFormat.Raw
+    )
+).decode()
+
+tx = Transtion(sender=pubkey_b64, recipient="SomeOtherPublicKey==", amount=25)
+
+print(f"transaction: {tx.to_dict()}")
+print(f"sign: {tx.signature}")
+print(f"is valid? {tx.is_valid()}")
