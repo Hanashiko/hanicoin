@@ -1,6 +1,7 @@
 import hashlib
 import json
 import time
+from transaction import Transaction
 
 class Block:
     def __init__(self, index, timestamp, transaction, previous_hash, nonce=0):
@@ -38,6 +39,11 @@ class Blockchain:
         return self.chain[-1]
     
     def add_transaction(self, transaction):
+        if not isinstance(transaction, Transaction):
+            raise TypeError("The Transaction object was waiting")
+        if not transaction.is_valid():
+            raise ValueError("Invalid signature of transaction format")
+        
         self.pending_transactions.append(transaction)
         
     def mine_pending_transactions(self, miner_address):
