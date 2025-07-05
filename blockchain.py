@@ -91,7 +91,7 @@ class Blockchain:
             print(f"Hash: {block.hash}")
             print(f"Prev: {block.previous_hash}")
             print("Transaction:")
-            for tx in block.transactions:
+            for tx in block.transaction:
                 if isinstance(tx, Transaction):
                     print(f"  {tx}")
                 else:
