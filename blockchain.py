@@ -110,3 +110,22 @@ class Blockchain:
                 else:
                     print(f"  {tx}")
             print()
+
+    def get_balance(self, address):
+        balance = 0
+        for block in self.chain:
+            for tx in block.transaction:
+                if isinstance(tx, dict):
+                    sender = tx.get("sender")
+                    recipient = tx.get("recipient")
+                    amount = tx.get("amount")
+                else:
+                    sender = tx.sender
+                    recipient = tx.recipient
+                    amount = tx.amount
+                    
+                if sender == address:
+                    balance -= amount
+                if recipient == address:
+                    balance += amount
+        return balance
