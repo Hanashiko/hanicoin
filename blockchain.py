@@ -47,11 +47,12 @@ class Blockchain:
         self.pending_transactions.append(transaction)
         
     def mine_pending_transactions(self, miner_address):
-        reward_tx = {
-            'sender': "SYSTEM",
-            'recipient': miner_address,
-            'amount': self.mining_reward
-        }
+        reward_tx = Transaction(
+            sender="SYSTEM",
+            recipient=miner_address,
+            amount=self.mining_reward,
+            signature=None
+        )
         self.pending_transactions.append(reward_tx)
         
         new_block = Block(
