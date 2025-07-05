@@ -59,6 +59,7 @@ pubkey_b64 = base64.b64encode(
 ).decode()
 
 tx = Transtion(sender=pubkey_b64, recipient="SomeOtherPublicKey==", amount=25)
+tx.sign(privkey)
 
 print(f"transaction: {tx.to_dict()}")
 print(f"sign: {tx.signature}")
