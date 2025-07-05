@@ -1,4 +1,4 @@
 __pycache__/
-mywallet_private.pem
-mywallet_public.pem
+wallet_private.pem
+wallet_public.pem
 venv/
