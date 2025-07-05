@@ -51,9 +51,15 @@ if __name__ == "__main__":
     subparsers.add_parser("create-wallet", help="Create new wallet")
     subparsers.add_parser("show-address", help="Show yourself address")
     
+    send_parser = subparsers.add_parser("send", help="Send transaction")
+    send_parser.add_argument("--to", required=True, help="Recipient address")
+    send_parser.add_argument("--amount", required=True, help="Amount")
+    
     args = parser.parse_args()
     
     if args.command == "create-wallet":
         create_wallet()
     elif args.command == "show-address":
         show_address()
+    elif args.command == "send":
+        send_transaction(args.to, args.amount)
