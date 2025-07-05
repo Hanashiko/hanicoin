@@ -58,6 +58,11 @@ class Blockchain:
         if not transaction.is_valid():
             raise ValueError("Invalid signature of transaction format")
         
+        if transaction.sender != "SYSTEM":
+            sender_balance = self.get_balance(transaction.sender)
+            if transaction.amount > sender_balance:
+                raise ValueError("Insufficient funds")
+        
         self.pending_transactions.append(transaction)
         
     def mine_pending_transactions(self, miner_address):
