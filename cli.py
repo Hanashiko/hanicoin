@@ -18,6 +18,18 @@ def show_address():
     pub = load_public_key(f"{WALLET_PREFIX}_public.pem")
     print(f"🔑 Your address: {get_address_from_public_key(pub)}")
     
+def send_transaction(to, amount):
+    priv = load_private_key(f"{WALLET_PREFIX}_private.pem")
+    pub = load_public_key(f"{WALLET_PREFIX}_public.pem")
+    addr = get_address_from_public_key(pub)
+    
+    tx = Transaction(
+        sender=addr,
+        recipient=to,
+        amount=amount
+    )
+    tx.sign()
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="HaniCoin CLI")
     
