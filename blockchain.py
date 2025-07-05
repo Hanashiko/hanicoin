@@ -24,7 +24,20 @@ class Block:
         return hashlib.sha256(block_string).hexdigest()
     
     def __str__(self):
-        return f"Block #{self.index} [\n Hash: {self.hash}\n Previous Hash: {self.previous_hash}\n Nonce: {self.nonce}\n Timestamp: {self.timestamp}\n Transaction: {json.dumps(self.transaction, indent=2)}\n]"
+        tx_output = []
+        for tx in self.transaction:
+            if isinstance(tx, Transaction):
+                tx_output.append(str(tx))
+            else:
+                tx_output.append(json.dumps(tx, indent=2))
+        
+        return (
+            f"--- Block  {self.index} ---\n"
+            f"Hash: {self.hash}\n"
+            f"Prev: {self.previous_hash}\n"
+            f"Nonce: {self.nonce}\n"
+            f"Transactions:\n" + "\n".join(f"  {tx}" for tx in tx_output)
+        )
 
 class Blockchain:
     def __init__(self):
