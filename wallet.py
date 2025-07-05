@@ -37,14 +37,3 @@ def get_address_from_public_key(public_key):
         format=serialization.PublicFormat.Raw
     )
     return base64.b64encode(raw_bytes).decode()
-
-priv, pub = generate_keypair()
-save_keys_to_files(priv, pub, name="mywallet")
-address = get_address_from_public_key(pub)
-print(f"your address: {address}")
-
-priv2 = load_private_key("mywallet_private.pem")
-pub2 = load_public_key("mywallet_public.pem")
-addr2 = get_address_from_public_key(pub2)
-
-print(f"address from file: {addr2}")
