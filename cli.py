@@ -13,3 +13,7 @@ def create_wallet():
     addr = get_address_from_public_key(pub)
     print("✅ Wallet created")
     print(f"🔑 Address: {addr}")
+    
+def show_address():
+    pub = load_public_key(f"{WALLET_PREFIX}_public.pem")
+    print(f"🔑 Your address: {get_address_from_public_key(pub)}")
