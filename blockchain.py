@@ -13,10 +13,11 @@ class Block:
         self.hash = self.calculate_hash()
         
     def calculate_hash(self):
+        transaction_data = [tx.to_dict() if isinstance(tx, Transaction) else tx for tx in self.transaction]
         block_string = json.dumps({
             "index": self.index,
             "timestamp": self.timestamp,
-            "transactions": self.transaction,
+            "transactions": transaction_data,
             "previous_hash": self.previous_hash,
             "nonce": self.nonce
         }, sort_keys=True).encode()
