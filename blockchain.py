@@ -21,5 +21,16 @@ class Block:
         }, sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
 
-block = Block(index=1, timestamp=2, transaction="fdsfds", previous_hash="fdsfsdf")
-print(block.calculate_hash())
+class Blockchain:
+    def __init__(self):
+        self.chain = [self.create_genesis_block()]
+        self.pending_transactions = []
+        self.difficulty = 4
+        self.mining_reward = 10
+        
+    def create_genesis_block(self):
+        return Block(0, time.time(), [], "0")
+    
+    def get_latest_block(self):
+        return self.chain[-1]
+    
