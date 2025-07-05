@@ -5,7 +5,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import (
 )
 from cryptography.exceptions import InvalidSignature
 
-class Transtion:
+class Transaction:
     def __init__(self, sender, recipient, amount, signature=None):
         self.sender = sender
         self.recipient = recipient
