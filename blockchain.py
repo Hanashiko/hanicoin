@@ -2,6 +2,7 @@ import hashlib
 import json
 import time
 from transaction import Transaction
+import os
 
 class Block:
     def __init__(self, index, timestamp, transaction, previous_hash, nonce=0):
@@ -41,7 +42,10 @@ class Block:
 
 class Blockchain:
     def __init__(self):
-        self.chain = [self.create_genesis_block()]
+        if os.path.exists("chain.json"):
+            self.chain = self.load_chain_from_file()
+        else:
+            self.chain = [self.create_genesis_block()]
         self.pending_transactions = []
         self.difficulty = 4
         self.mining_reward = 10
@@ -83,6 +87,7 @@ class Blockchain:
         
         self.proof_of_work(new_block)
         self.chain.append(new_block)
+        self.save_chain_to_file()
         self.pending_transactions = []
         
     def proof_of_work(self, block):
@@ -134,3 +139,39 @@ class Blockchain:
                 if recipient == address:
                     balance += amount
         return balance
+    
+    def save_chain_to_file(self, filename="chain.json"):
+        chain_data = []
+        for block in self.chain:
+            transactions_data = [
+                tx.to_dict() if isinstance(tx, Transaction) else tx
+                for tx in block.transaction
+            ]
+            chain_data.append({
+                "index": block.index,
+                "timestamp": block.timestamp,
+                "transactions": block.transaction,
+                "previeus_hash": block.previous_hash,
+                "nonce": block.nonce,
+                "hash": block.hash
+            })
+        with open(filename, "w") as f:
+            json.dump(chain_data, f, indent=1)
+            
+    def load_chain_from_file(self, filename="chain.json"):
+        with open(filename, "r") as f:
+            data = json.load(f)
+            
+        chain = []
+        for block_data in data:
+            txs = [Transaction(**tx) for tx in block_data["transactions"]]
+            block = Block(
+                index=block_data["index"],
+                timestamp=block_data["timestamp"],
+                transaction=txs,
+                previous_hash=block_data["previous_hash"],
+                nonce=block_data["nonce"]
+            )
+            block.hash = block_data["hash"]
+            chain.append(block)
+        return chain
