@@ -186,6 +186,43 @@ def peer_announce():
         return "OK", 200
     return "Invalid peer", 400
 
+@app.route("/mine", methods=["POST"])
+def mine_block():
+    data = request.get_json()
+    miner_address = data.get("miner_address")
+    if not miner_address:
+        return "You need to specify 'miner_address'", 400
+    
+    blockchain.mine_pending_transactions(miner_address)
+    blockchain.save_chain_to_file()
+    
+    latest = blockchain.get_latest_block()
+    
+    block_data = {
+        "index": latest.index,
+        "timestamp": latest.timestamp,
+        "transactions": [
+            tx.to_dict() if isinstance(tx, Transaction) else tx
+            for tx in latest.transaction
+        ],
+        "previous_hash": latest.previous_hash,
+        "nonce": latest.nonce,
+        "hash": latest.hash
+    }
+    
+    for peer in peers:
+        try:
+            requests.post(f"{peer}/block/receive", json=block_data)
+        except:
+            continue
+        
+    return jsonify({
+        "message": "✅ New block mined",
+        "index": latest.index,
+        "hash": latest.hash,
+        "transaction": let(latest.transaction)
+    }), 200
+
 if __name__ == "__main__":
     import sys
     port = 5000
