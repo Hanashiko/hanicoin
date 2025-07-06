@@ -62,7 +62,10 @@ def new_transaction():
     if not tx.is_valid():
         return 'Invalid signature', 400
     
-    blockchain.add_transaction(tx)
+    try:
+        blockchain.add_transaction(tx)
+    except Exception as e:
+        return f'Error: {str(e)}', 400
     
     for peer in peers:
         try:
