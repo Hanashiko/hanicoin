@@ -135,11 +135,15 @@ def sync_chain():
     for peer in peers:
         try:
             response = requests.get(f"{peer}/chain", timeout=5)
+            print(f"[test] Response: {response}")
             if response.status_code != 200:
                 continue
             
             remote_chain_data = response.json()
 
+            print(f"[test] Peer {peer} have chain with {remote_chain_data} blocks")
+            print(f"[test] Our chain have {len(blockchain.chain)} blocks")
+            print(f"[test] Chain from {peer} valid: {is_chain_valid(remote_chain_data)}")
             if not is_chain_valid(remote_chain_data):
                 continue
             if len(remote_chain_data) > best_length:
