@@ -5,6 +5,7 @@ from blockchain import Blockchain
 import os
 import base64
 import requests
+import json
 
 WALLET_PREFIX = "wallet"
 NODE_URL = "http://localhost:5000"
@@ -86,6 +87,28 @@ def show_latest_block():
     else:
         print(f"❌ Error: {response.text}")
 
+def sign_transaction_only(to, amount):
+    private_key = load_private_key(f"{WALLET_PREFIX}_private.pem")
+    public_key = load_public_key(f"{WALLET_PREFIX}_public.pem")
+    sender_addr = get_address_from_public_key(public_key)
+    
+    tx = Transaction(
+        sender=sender_addr,
+        recipient=to,
+        amount=amount,
+        signature=""
+    )
+    tx.sign(private_key)
+    
+    signed = {
+        "sender": tx.sendeer,
+        "recipient": tx.recipient,
+        "amount": tx.amount,
+        "signature": tx.signature
+    }
+    
+    print(json.dumps(signed, indent=4))
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="HaniCoin CLI")
     
@@ -104,6 +127,10 @@ if __name__ == "__main__":
     
     subparsers.add_parser("chain", help="Show latest block")
     
+    sign_parser = subparsers.add_parser("sign-tx", help="Sign transaction")
+    sign_parser.add_argument("--to", required=True, help="Recipient address")
+    sign_parser.add_argument("--amount", required=True, help="Amount")
+    
     args = parser.parse_args()
     
     if args.command == "create-wallet":
@@ -118,5 +145,7 @@ if __name__ == "__main__":
         check_balance()
     elif args.command == "chain":
         show_latest_block()
+    elif args.command == "send-tx":
+        sign_transaction_only(args.to, args.amount)
     else:
         parser.print_help()
