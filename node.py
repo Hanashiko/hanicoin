@@ -1,11 +1,35 @@
 from flask import Flask, request, jsonify
-from blockchain import Blockchain
+from blockchain import Blockchain, Block
 from transaction import Transaction
 import json
+import requests
 
 app = Flask(__name__)
 blockchain = Blockchain()
 peers = set()
+
+def is_chain_valid(chain_data):
+    for i in range(1, len(chain_data)):
+        prev = chain_data[i - 1]
+        curr = chain_data[i]
+        if curr["previous_hash"] != prev["hash"]:
+            return False
+    return True
+
+def convert_chain(chain_data):
+    chain = []
+    for block_data in chain_data:
+        txs = [Transaction(**tx) for tx in block_data["transactions"]]
+        block = Block(
+            index=block_data["index"],
+            timestamp=block_data["timestamp"],
+            transaction=txs,
+            previous_hash=block_data["previous_hash"],
+            nonce=block_data["nonce"]
+        )
+        block.hash = block_data["hash"]
+        chain.append(block)
+    return chain
 
 @app.route('/chain', methods=['GET'])
 def get_chain():
@@ -68,6 +92,31 @@ def add_peer():
         peers.add(peer)
         return 'Peer added', 201
     return 'No peer', 400
+
+@app.route("/sync", methods=["POST"])
+def sync_chain():
+    imported = 0
+    longest_chain = None
+    max_length = len(blockchain.chain)
+    
+    for peer in peers:
+        try:
+            response = requests.get(f"{peer}/chain")
+            if response.status_code == 200:
+                remote_chain = response.json()
+                if len(remote_chain) > max_length and is_chain_valid(remote_chain):
+                    max_length = len(remote_chain)
+                    longest_chain = remote_chain
+        except Exception as e:
+            print(f"Error syncing with {peer}: {e}")
+            continue
+        
+    if longest_chain:
+        blockchain.chain = convert_chain(longest_chain)
+        blockchain.save_chain_to_file()
+        return f"Chain syncronized. New length: {max_length}", 200
+    
+    return f"No longer valid chain found",200
 
 if __name__ == "__main__":
     import sys
