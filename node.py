@@ -13,6 +13,8 @@ bootstrap_peers = [
     "http://localhost:5001"
 ]
 
+PORT = 5000
+
 def is_chain_valid(chain_data):
     for i in range(1, len(chain_data)):
         prev = chain_data[i - 1]
@@ -260,7 +262,7 @@ def mine_block():
 
 if __name__ == "__main__":
     import sys
-    port = 5000
+    port = PORT
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
     app.run(host='0.0.0.0', port=port)
