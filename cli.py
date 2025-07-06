@@ -101,7 +101,7 @@ def sign_transaction_only(to, amount):
     tx.sign(private_key)
     
     signed = {
-        "sender": tx.sendeer,
+        "sender": tx.sender,
         "recipient": tx.recipient,
         "amount": tx.amount,
         "signature": tx.signature
@@ -145,7 +145,7 @@ if __name__ == "__main__":
         check_balance()
     elif args.command == "chain":
         show_latest_block()
-    elif args.command == "send-tx":
+    elif args.command == "sign-tx":
         sign_transaction_only(args.to, args.amount)
     else:
         parser.print_help()
