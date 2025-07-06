@@ -176,6 +176,16 @@ def get_pending_transactions():
     ]
     return jsonify(pending), 200
 
+@app.route("/peer/announce", methods=["POST"])
+def peer_announce():
+    data = request.get_json()
+    peer = data.get("peer")
+    if peer and peer != request.host_url.strip("/"):
+        peers.add(peer)
+        print(f"[+] New peer connected: {peer}")
+        return "OK", 200
+    return "Invalid peer", 400
+
 if __name__ == "__main__":
     import sys
     port = 5000
