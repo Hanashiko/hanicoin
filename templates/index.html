@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HaniCoin Blockchain</title>
+</head>
+<body>
+    <h1>🌐 HaniCoin Node UI</h1>
+
+    <h2>📊 Balance</h2>
+    <input type="text" id="addr" placeholder="Write address">
+    <button onclick="checkBalance()">Check</button>
+    <p id="bal"></p>
+
+    <h2>📤 Send transaction</h2>
+    <input id="from" placeholder="Sender pubkey (base64)"><br>
+    <input id="to" placeholder="Recipient pubkey (base64)"><br>
+    <input id="amt" placeholder="Amount"><br>
+    <input id="sig" placeholder="Signature (base64)"><br>
+    <button onclick="sendTx()">Send</button>
+    <p id="txStatus"></p>
+
+    <script>
+        function checkBalance() {
+            let a = document.getElementById("addr").value;
+            fetch("/balance?address=" + encodeURIComponent(a))
+                .then(res => res.json())
+                .then(data => document.getElementById("bal").innerText = "Balance: " + data.balance)
+        }
+        
+        function sendTx() {
+            let body = {
+                sender: document.getElementById("from").value,
+                recipient: document.getElementById("to").value,
+                amount: parseFloat(document.getElementById("amt").value),
+                signature: document.getElementById("sig").value
+            };
+            fetch("/transaction/new", {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(body)
+            }).then(res => res.text())
+              .then(txt => document.getElementById("txStatus").innerText = txt);
+        }
+
+        function mine() {
+            let miner = document.getElementById("miner").value;
+            fetch("/mine", {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({miner_address: miner})
+            }).then(res => res.json())
+              .then(data => document.getElementById("mineStatus").innerText = "✅ Block #" + data.index);
+        }
+    </script>
+</body>
+</html>

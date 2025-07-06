@@ -1,11 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from blockchain import Blockchain, Block
 from transaction import Transaction
 import json
 import requests
 import sys
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 blockchain = Blockchain()
 peers = set()
 
@@ -78,6 +78,10 @@ def sync_with_network():
             print(f"[√] Syncronised with {peer}: {response.status_code}")
         except:
             print(f"[!] Failed to synchronise with {peer}")
+
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 @app.route('/chain', methods=['GET'])
 def get_chain():
