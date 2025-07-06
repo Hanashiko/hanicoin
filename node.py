@@ -63,6 +63,13 @@ def new_transaction():
         return 'Invalid signature', 400
     
     blockchain.add_transaction(tx)
+    
+    for peer in peers:
+        try:
+            requests.post(f"{peer}/transaction/new",json=data)
+        except:
+            continue
+    
     return 'Transaction added', 201
 
 @app.route('/block/receive', methods=['POST'])
