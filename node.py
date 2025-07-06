@@ -118,10 +118,15 @@ def receive_block():
 def add_peer():
     data = request.get_json()
     peer = data.get("peer")
-    if peer:
-        peers.add(peer)
-        return 'Peer added', 201
-    return 'No peer', 400
+    
+    if not peer:
+        return "No peer provided", 400
+    
+    if not peer.startswith("http://") and not peer.startswith("https://"):
+        peer = f"http://{peer}"
+        
+    peers.add(peer)
+    return 'Peer added', 201
 
 @app.route('/peers', methods=["GET"])
 def get_peers():
