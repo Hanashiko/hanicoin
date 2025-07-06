@@ -8,6 +8,11 @@ app = Flask(__name__)
 blockchain = Blockchain()
 peers = set()
 
+bootstrap_peers = [
+    "http://localhost:5000",
+    "http://localhost:5001"
+]
+
 def is_chain_valid(chain_data):
     for i in range(1, len(chain_data)):
         prev = chain_data[i - 1]
