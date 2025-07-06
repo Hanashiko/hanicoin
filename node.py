@@ -12,7 +12,18 @@ def is_chain_valid(chain_data):
     for i in range(1, len(chain_data)):
         prev = chain_data[i - 1]
         curr = chain_data[i]
+        
         if curr["previous_hash"] != prev["hash"]:
+            return False
+        
+        reconstructed = Block(
+            index=curr["index"],
+            timestamp=curr["timestamp"],
+            transaction=[Transaction(**tx) for tx in curr["transaction"]],
+            previous_hash=curr["previous_hash"],
+            nonce=curr["nonce"]
+        )
+        if reconstructed.hash != curr["hash"]:
             return False
     return True
 
