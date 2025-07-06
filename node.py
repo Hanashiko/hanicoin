@@ -55,14 +55,20 @@ def convert_chain(chain_data):
 
 def announce_myself():
     my_url = f"http://localhost:{PORT}"
-    for peer in bootstrap_peers:
-        if peer == my_url:
+    for bootstrap in bootstrap_peers:
+        if bootstrap == my_url:
             continue
         try:
-            requests.post(f"{peer}/peer/announce", json={"peer": my_url})
-            print(f"[>] Notified {peer} about itself")
+            response = requests.post(f"{bootstrap}/peer/announce", json={"peer": my_url})
+            if response.status_code == 200:
+                peer_data = response.json()
+                their_peers = peer_data.get("peers", [])
+                for peer in their_peers:
+                    if peer != my_url:
+                        peers.add(peer)
+                print(f"[>] Notified {bootstrap}, received peeers: {their_peers}")
         except Exception as e:
-            print(f"[!] Could not notify {peer}:{e}")
+            print(f"[!] Could not notify {bootstrap}: {e}")
             
 def sync_with_network():
     my_url = f"http://localhost:{PORT}"
@@ -243,7 +249,7 @@ def peer_announce():
     if peer and peer != request.host_url.strip("/"):
         peers.add(peer)
         print(f"[+] New peer connected: {peer}")
-        return "OK", 200
+        return jsonify({"message":"OK","peers":list(peers)}), 200
     return "Invalid peer", 400
 
 @app.route("/mine", methods=["POST"])
