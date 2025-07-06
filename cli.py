@@ -4,8 +4,10 @@ from transaction import Transaction
 from blockchain import Blockchain
 import os
 import base64
+import requests
 
 WALLET_PREFIX = "wallet"
+NODE_URL = "http://localhost:5000"
 
 def create_wallet():
     priv, pub = generate_keypair()
@@ -46,6 +48,15 @@ def send_transaction(to, amount):
 def mine_block():
     pub = load_public_key(f"{WALLET_PREFIX}_public.pem")
     addr = get_address_from_public_key(pub)
+    
+    response = requests.post(f"{NODE_URL}/mine", json={"miner_address": addr})
+    
+    if response.status_code == 200:
+        data = response.json()
+        print(f"✅ Mined block #{data['index']} with {data['transactions']} transactions")
+        print(f"🔗 Hash: {data['hash']}")
+    else:
+        print(f"❌ Mining error: {response.text}")
     
     from blockchain import Blockchain
     bc = Blockchain()
