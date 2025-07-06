@@ -50,6 +50,17 @@ def convert_chain(chain_data):
         chain.append(block)
     return chain
 
+def announce_myself():
+    my_url = f"http://localhost:{PORT}"
+    for peer in bootstrap_peers:
+        if peer == my_url:
+            continue
+        try:
+            requests.post(f"{peer}/peer/announce", json={"peer": my_url})
+            print(f"[>] Notified {peer} about itself")
+        except Exception as e:
+            print(f"[!] Could not notify {peer}:{e}")
+
 @app.route('/chain', methods=['GET'])
 def get_chain():
     chain_data = []
