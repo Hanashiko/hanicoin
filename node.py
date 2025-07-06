@@ -168,6 +168,14 @@ def latest_block():
         "hash": latest.hash
     }), 200
 
+@app.route("/pending", methods=["GET"])
+def get_pending_transactions():
+    pending = [
+        tx.to_dict() if isinstance(tx, Transaction) else tx
+        for tx in blockchain.pending_transactions
+    ]
+    return jsonify(pending), 200
+
 if __name__ == "__main__":
     import sys
     port = 5000
