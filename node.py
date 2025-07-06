@@ -153,6 +153,21 @@ def get_balance():
 def ping():
     return "pong", 200
 
+@app.route("/latest", methods=["GET"])
+def latest_block():
+    latest = blockchain.get_latest_block()
+    return jsonify({
+        "index": latest.idnex,
+        "timestamp": latest.timestamp,
+        "transactions": [
+            tx.to_dict() if isinstance(tx, Transaction) else tx
+            for tx in latest.transaction
+        ],
+        "previous_hash": latest.previous_hash,
+        "nonce": latest.nonce,
+        "hash": latest.hash
+    }), 200
+
 if __name__ == "__main__":
     import sys
     port = 5000
