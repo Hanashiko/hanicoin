@@ -220,7 +220,7 @@ def mine_block():
         "message": "✅ New block mined",
         "index": latest.index,
         "hash": latest.hash,
-        "transaction": let(latest.transaction)
+        "transaction": len(latest.transaction)
     }), 200
 
 if __name__ == "__main__":
