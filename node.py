@@ -122,10 +122,13 @@ def sync_chain():
     
     return f"No longer valid chain found",200
 
-@app.route("/balance/<address>", methods=["GET"])
-def get_balance(address):
-    bal = blockchain.get_balance(address)
-    return jsonify({"address": address, "balance": bal}), 200
+@app.route("/balance", methods=["GET"])
+def get_balance():
+    address = request.args.get("address")
+    if not address:
+        return "Address is not specified", 400
+    balance = blockchain.get_balance(address)
+    return jsonify({"address": address, "balance": balance}), 200
 
 if __name__ == "__main__":
     import sys
