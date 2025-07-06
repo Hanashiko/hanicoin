@@ -60,6 +60,15 @@ def announce_myself():
             print(f"[>] Notified {peer} about itself")
         except Exception as e:
             print(f"[!] Could not notify {peer}:{e}")
+            
+def sync_with_network():
+    my_url = f"http://localhost:{PORT}"
+    for peer in peers:
+        try:
+            response = requests.port(f"{peer}/sync")
+            print(f"[√] Syncronised with {peer}: {response.status_code}")
+        except:
+            print(f"[!] Failed to synchronise with {peer}")
 
 @app.route('/chain', methods=['GET'])
 def get_chain():
@@ -272,8 +281,7 @@ def mine_block():
     }), 200
 
 if __name__ == "__main__":
-    import sys
-    port = PORT
-    if len(sys.argv) > 1:
-        port = int(sys.argv[1])
-    app.run(host='0.0.0.0', port=port)
+    announce_myself()
+    sync_with_network()
+        
+    app.run(host='0.0.0.0', port=PORT)
