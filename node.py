@@ -157,7 +157,7 @@ def ping():
 def latest_block():
     latest = blockchain.get_latest_block()
     return jsonify({
-        "index": latest.idnex,
+        "index": latest.index,
         "timestamp": latest.timestamp,
         "transactions": [
             tx.to_dict() if isinstance(tx, Transaction) else tx
