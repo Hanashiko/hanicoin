@@ -13,6 +13,10 @@ def is_chain_valid(chain_data):
         prev = chain_data[i - 1]
         curr = chain_data[i]
         
+        print(f"[test] {i = }")
+        print(f"[test] {curr["previous_hash"] = }")
+        print(f"[test] {prev["hash"] = }")
+        print(f"[test] {curr["previous_hash"] != prev["hash"] = }")
         if curr["previous_hash"] != prev["hash"]:
             return False
         
@@ -23,6 +27,7 @@ def is_chain_valid(chain_data):
             previous_hash=curr["previous_hash"],
             nonce=curr["nonce"]
         )
+        print(f"[test] {reconstructed.index = }; {reconstructed.timestamp = }; {reconstructed.transaction = }; {reconstructed.previous_hash = }; {reconstructed.nonce = }")
         if reconstructed.hash != curr["hash"]:
             return False
     return True
@@ -49,7 +54,7 @@ def get_chain():
         chain_data.append({
             "index": block.index,
             "timestamp": block.timestamp,
-            "transactiond": [tx.to_dict() if isinstance(tx, Transaction) else tx for tx in block.transaction],
+            "transaction": [tx.to_dict() if isinstance(tx, Transaction) else tx for tx in block.transaction],
             "previous_hash": block.previous_hash,
             "nonce": block.nonce,
             "hash": block.hash
