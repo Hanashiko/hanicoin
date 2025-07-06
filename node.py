@@ -79,6 +79,7 @@ def new_transaction():
 def receive_block():
     data = request.get_json()
     transactions = [Transaction(**tx) for tx in data['transactions']]
+    
     new_block = blockchain.create_genesis_block()
     new_block.index = data['index']
     new_block.timestamp = data['timestamp']
@@ -90,6 +91,14 @@ def receive_block():
     if new_block.previous_hash == blockchain.get_latest_block().hash:
         blockchain.chain.append(new_block)
         blockchain.pending_transactions = []
+        blockchain.save_chain_to_file()
+        
+        for peer in peers:
+            try:
+                requests.post(f"{peer}/block/receive", json=data)
+            except:
+                continue
+        
         return 'Block accepted', 201
     else:
         return 'Block rejected', 400
