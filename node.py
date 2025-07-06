@@ -93,6 +93,10 @@ def add_peer():
         return 'Peer added', 201
     return 'No peer', 400
 
+@app.route('/peers', methods=["GET"])
+def get_peers():
+    return jsonify(list(peers)), 200
+
 @app.route("/sync", methods=["POST"])
 def sync_chain():
     imported = 0
