@@ -95,7 +95,7 @@ def sign_transaction_only(to, amount):
     tx = Transaction(
         sender=sender_addr,
         recipient=to,
-        amount=amount,
+        amount=int(amount),
         signature=""
     )
     tx.sign(private_key)
