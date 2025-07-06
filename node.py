@@ -31,31 +31,6 @@ def convert_chain(chain_data):
         chain.append(block)
     return chain
 
-def validate_received_chain(chain_data):
-    required_block_fields = ['index', 'timestamp', 'transaction', 'previous_hash', 'nonce', 'hash']
-    for block in chain_data:
-        if not all(field in block for field in required_block_fields):
-            return False
-    for i in range(1, len(chain_data)):
-        if chain_data[i]['previous_hash'] != chain_data[i-1]['hash']:
-            return False
-    for block in chain_data[1:]:
-        if not block['hash'].startswith('0' * blockchain.difficulty):
-            return False
-    return True
-
-def sync_pending_transactrion(peer_url):
-    try:
-        response = requests.get(f"{peer_url}/pending", timeout=3)
-        if response.status_code == 200:
-            pending_txs = response.json()
-            for tx_data in pending_txs:
-                tx = Transaction(**tx_data)
-                if tx not in blockchain.pending_transactions and tx.is_valid():
-                    blockchain.pending_transactions.append(tx)
-    except Exception as e:
-        print(f"Pending sync error: {str(e)}")
-
 @app.route('/chain', methods=['GET'])
 def get_chain():
     chain_data = []
@@ -143,13 +118,8 @@ def get_peers():
 
 @app.route("/sync", methods=["POST"])
 def sync_chain():
-    if not peers:
-        return "No peers available", 400
-    
-    current_length = len(blockchain.chain)
-    best_chain = None
-    best_length = current_length
-    best_peer = None
+    best_chain = blockchain.chain
+    best_length = len(best_chain)
 
     for peer in peers:
         try:
@@ -157,29 +127,32 @@ def sync_chain():
             if response.status_code != 200:
                 continue
             
-            peer_chain = response.json()
-            
-            if len(peer_chain) <= best_length:
+            remote_chain_data = response.json()
+
+            if not is_chain_valid(remote_chain_data):
                 continue
-            
-            if not validate_received_chain(peer_chain):
-                continue
-            
-            best_chain = peer_chain
-            best_length = len(peer_chain)
-            best_peer = peer
+            if len(remote_chain_data) > best_length:
+                best_chain = convert_chain(remote_chain_data)
+                best_length = len(best_chain)
             
         except Exception as e:
             print(f"Error syncing with {peer}: {str(e)}")
             continue
         
-    if best_chain:
-        blockchain.chain = convert_chain(best_chain)
+    if best_length > len(blockchain.chain):
+        blockchain.chain = best_chain
         blockchain.save_chain_to_file()
-        sync_pending_transaction(best_peer)
-        return f"Chain syncronized from {best_peer}. New length: {best_length}", 200
-    
-    return f"No better chain found", 200
+        return jsonify({
+            "message": "✅ Chain updated from another node",
+            "length": best_length,
+            "hash": blockchain.get_latest_block().hash
+        }), 200
+    else:
+        return jsonify({
+            "message": "[i] Our chain is already up to date",
+            "length": len(blockchain.chain),
+            "hash": blockchain.get_latest_block().hash
+        }), 200
 
 @app.route("/balance", methods=["GET"])
 def get_balance():
