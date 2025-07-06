@@ -3,6 +3,7 @@ from blockchain import Blockchain, Block
 from transaction import Transaction
 import json
 import requests
+import sys
 
 app = Flask(__name__)
 blockchain = Blockchain()
@@ -12,8 +13,10 @@ bootstrap_peers = [
     "http://localhost:5000",
     "http://localhost:5001"
 ]
-
-PORT = 5000
+port = 5000
+if len(sys.argv) > 1:
+    port = int(sys.argv[1])
+PORT = port
 
 def is_chain_valid(chain_data):
     for i in range(1, len(chain_data)):
