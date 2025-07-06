@@ -149,6 +149,10 @@ def get_balance():
     balance = blockchain.get_balance(address)
     return jsonify({"address": address, "balance": balance}), 200
 
+@app.route("/ping", methods=["GET"])
+def ping():
+    return "pong", 200
+
 if __name__ == "__main__":
     import sys
     port = 5000
