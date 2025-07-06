@@ -75,6 +75,16 @@ def check_balance():
         print(f"💰 Balance: {data['balance']} coins")
     else:
         print(f"❌ Error when checking balance: {response.text}")
+        
+def show_latest_block():
+    response = requests.get(f"{NODE_URL}/latest")
+    if response.status_code == 200:
+        block = response.json()
+        print(f"🧱 Block #{block['index']}")
+        print(f"🔗 Hash: {block['hash']}")
+        print(f"📦 Transactions: {len(block['transactions'])}")
+    else:
+        print(f"❌ Error: {response.text}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="HaniCoin CLI")
@@ -92,6 +102,8 @@ if __name__ == "__main__":
     
     subparsers.add_parser("balance", help="Check balance")
     
+    subparsers.add_parser("chain", help="Show latest block")
+    
     args = parser.parse_args()
     
     if args.command == "create-wallet":
@@ -104,5 +116,7 @@ if __name__ == "__main__":
         mine_block()
     elif args.command == "balance":
         check_balance()
+    elif args.command == "chain":
+        show_latest_block()
     else:
         parser.print_help()
