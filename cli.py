@@ -68,9 +68,13 @@ def check_balance():
     pub  = load_public_key(f"{WALLET_PREFIX}_public.pem")
     addr = get_address_from_public_key(pub)
     
-    bc = Blockchain()
-    bal = bc.get_balance(addr)
-    print(f"💰 Address balance {addr:12}...: {bal}")
+    response = requests.get(f"{NODE_URL}/balance", params={"address": addr})
+    
+    if response.status_code == 200:
+        data = response.json()
+        print(f"💰 Balance: {data['balance']} coins")
+    else:
+        print(f"❌ Error when checking balance: {response.text}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="HaniCoin CLI")
