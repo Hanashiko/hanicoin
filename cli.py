@@ -26,7 +26,7 @@ def send_transaction(to, amount):
     tx = Transaction(
         sender=addr,
         recipient=to,
-        amount=amount
+        amount=float(amount)
     )
     tx.sign(priv)
     
